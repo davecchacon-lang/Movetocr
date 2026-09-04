@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Costa Rica Relocation Cost Calculator | RelocateCR</title>
+<meta name="description" content="A personalized monthly budget calculator for moving to or retiring in Costa Rica — plus a plain-language check of the Pensionado, Rentista, and Digital Nomad visa income requirements. Updated September 2026.">
+<meta property="og:title" content="How Much Do You Really Need to Live in Costa Rica?">
+<meta property="og:description" content="Personalized cost-of-living calculator for Costa Rica relocation — by region, lifestyle, and visa track.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌴</text></svg>">
+<style>
+  :root{
+    --green-900:#0d3b2e; --green-700:#15594a; --green-600:#1a6e5a; --green-500:#1f8a6f;
+    --sand-50:#fbf8f2; --sand-100:#f4efe3; --sand-200:#e8dfc9;
+    --ink-900:#1c2321; --ink-700:#3d4744; --ink-500:#6b7572;
+    --sky-500:#3a7ca5; --coral-500:#e2725b;
+    --ok-bg:#e8f5ee; --ok-text:#166a4c;
+    --warn-bg:#fdf1e3; --warn-text:#9a5b12;
+    --radius:14px;
+    --shadow: 0 1px 2px rgba(20,30,25,.06), 0 8px 24px rgba(20,30,25,.08);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--sand-50); color:var(--ink-900); line-height:1.55;
+  }
+  a{color:var(--green-600);}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px;}
+  header.site{
+    background:var(--green-900); color:#fff; padding:16px 0;
+  }
+  header.site .wrap{display:flex;align-items:center;justify-content:space-between;}
+  .brand{font-weight:800;font-size:1.15rem;letter-spacing:.2px;display:flex;align-items:center;gap:8px;}
+  .brand span.dot{color:var(--sand-100);opacity:.65;font-weight:400;font-size:.85rem;}
+  nav.site a{color:#e8f1ec;text-decoration:none;margin-left:22px;font-size:.92rem;}
+  nav.site a:hover{text-decoration:underline;}
+
+  .hero{
+    background:linear-gradient(180deg,var(--green-900) 0%, var(--green-700) 55%, var(--green-600) 100%);
+    color:#fff; padding:56px 0 84px;
+  }
+  .hero h1{font-size:clamp(1.9rem,4vw,2.7rem); margin:0 0 14px; font-weight:800; letter-spacing:-.5px;}
+  .hero p.lead{font-size:1.1rem; max-width:640px; color:#dcece4; margin:0 0 6px;}
+  .hero .updated{font-size:.82rem; color:#9fc9b8; margin-top:14px;}
+
+  .tool-card{
+    background:#fff; border-radius:var(--radius); box-shadow:var(--shadow);
+    margin-top:-56px; padding:28px; position:relative; z-index:2;
+  }
+  .tool-grid{display:grid; grid-template-columns:1fr 1fr; gap:30px 40px;}
+  @media (max-width:760px){.tool-grid{grid-template-columns:1fr;}}
+  .trust-line{display:flex; align-items:center; gap:7px; font-size:.8rem; color:var(--green-700); font-weight:700; margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--sand-200);}
+  .trust-line svg{width:16px; height:16px; flex-shrink:0;}
+
+  fieldset{border:none; padding:0; margin:0;}
+  legend{font-weight:700; font-size:.82rem; text-transform:uppercase; letter-spacing:.6px; color:var(--ink-500); margin-bottom:10px;}
+  .opt-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .opt{
+    border:1.5px solid var(--sand-200); background:var(--sand-50); border-radius:999px;
+    padding:8px 14px; font-size:.88rem; cursor:pointer; user-select:none; transition:.12s;
+    color:var(--ink-700);
+  }
+  .opt:hover{border-color:var(--green-500);}
+  .opt.active{background:var(--green-600); border-color:var(--green-600); color:#fff; font-weight:600;}
+  .field-block{margin-bottom:4px;}
+
+  .region-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  @media (max-width:480px){.region-grid{grid-template-columns:1fr;}}
+  .opt.region-card{border-radius:10px; padding:12px 14px; text-align:left; display:block;}
+  .opt.region-card .rc-title{display:block; font-weight:700; font-size:.86rem; margin-bottom:3px;}
+  .opt.region-card .rc-sub{display:block; font-size:.75rem; color:var(--ink-500); font-weight:400; line-height:1.35;}
+  .opt.region-card.active .rc-sub{color:#d7ece2;}
+
+  .num-input{display:flex; align-items:center; gap:10px;}
+  .num-input input[type=number]{
+    width:130px; padding:9px 12px; border:1.5px solid var(--sand-200); border-radius:8px; font-size:.95rem;
+  }
+  .stepper{display:flex; border:1.5px solid var(--sand-200); border-radius:8px; overflow:hidden;}
+  .stepper button{background:var(--sand-100); border:none; width:34px; height:34px; font-size:1.1rem; cursor:pointer; color:var(--ink-700);}
+  .stepper button:hover{background:var(--sand-200);}
+  .stepper span{width:34px; display:flex; align-items:center; justify-content:center; font-weight:700;}
+
+  .results{
+    margin-top:26px; padding-top:26px; border-top:1px solid var(--sand-200);
+  }
+  .results-head{display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+  .big-number{font-size:clamp(1.8rem,4vw,2.4rem); font-weight:800; color:var(--green-900);}
+  .big-number small{display:block; font-size:.78rem; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:var(--ink-500); margin-bottom:2px;}
+  .range-note{font-size:.85rem; color:var(--ink-500); max-width:320px; text-align:right;}
+
+  .bars{margin-top:18px; display:flex; flex-direction:column; gap:10px;}
+  .bar-row{display:grid; grid-template-columns:150px 1fr 76px; align-items:center; gap:12px; font-size:.88rem;}
+  .bar-row .label{color:var(--ink-700);}
+  .bar-track{background:var(--sand-100); border-radius:6px; height:10px; overflow:hidden;}
+  .bar-fill{height:100%; background:var(--green-500); border-radius:6px;}
+  .bar-row .amt{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-900); font-weight:600;}
+
+  .visa-check{
+    margin-top:32px; padding:18px 20px; border-radius:10px; background:var(--sand-100);
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .visa-check.ok{background:var(--ok-bg);}
+  .visa-check.warn{background:var(--warn-bg);}
+  .visa-check .icon{flex-shrink:0; color:var(--ink-500); margin-top:1px;}
+  .visa-check.ok .icon{color:var(--ok-text);}
+  .visa-check.warn .icon{color:var(--warn-text);}
+  .visa-check h4{margin:0 0 4px; font-size:.95rem; font-weight:700;}
+  .visa-check.ok h4{color:var(--ok-text);}
+  .visa-check.warn h4{color:var(--warn-text);}
+  .visa-check p{margin:0; font-size:.87rem; color:var(--ink-700);}
+
+  .income-row{display:flex; align-items:center; gap:10px; margin-top:16px;}
+  .income-row label{font-size:.85rem; color:var(--ink-500); font-weight:600;}
+  .income-row input{padding:8px 10px; border:1.5px solid var(--sand-200); border-radius:8px; width:140px; font-size:.9rem;}
+
+  .cta{
+    margin-top:36px; padding:20px 22px; border-radius:10px; background:var(--sand-100); color:var(--ink-900);
+    border:1.5px solid var(--sand-200);
+    display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+  }
+  .cta .copy h4{margin:0 0 4px; font-size:.95rem; color:var(--green-900);}
+  .cta .copy p{margin:0; font-size:.83rem; color:var(--ink-500); max-width:380px;}
+  .cta form{display:flex; gap:8px; flex-wrap:wrap;}
+  .cta input[type=email]{padding:10px 12px; border-radius:8px; border:1.5px solid var(--sand-200); min-width:220px; font-size:.9rem; background:#fff;}
+  .cta button{
+    background:var(--coral-500); color:#fff; border:none; padding:10px 18px; border-radius:8px;
+    font-weight:700; cursor:pointer; font-size:.9rem;
+  }
+  .cta button:hover{background:#cf5f49;}
+  .cta .thanks{font-size:.88rem; color:var(--ok-text); display:none; font-weight:600;}
+
+  section.info{padding:56px 0;}
+  section.info.alt{background:var(--sand-100);}
+  .info h2{font-size:1.5rem; margin-bottom:6px;}
+  .info .sub{color:var(--ink-500); margin-top:0; margin-bottom:28px; font-size:.95rem;}
+
+  table.visa-table{width:100%; border-collapse:collapse; background:#fff; border-radius:10px; overflow:hidden; box-shadow:var(--shadow);}
+  table.visa-table th, table.visa-table td{padding:14px 16px; text-align:left; font-size:.88rem; border-bottom:1px solid var(--sand-200);}
+  table.visa-table th{background:var(--green-900); color:#fff; font-weight:700; font-size:.78rem; text-transform:uppercase; letter-spacing:.4px;}
+  table.visa-table tr:last-child td{border-bottom:none;}
+  table.visa-table td.amt{font-weight:700; color:var(--green-700); white-space:nowrap;}
+  table.visa-table .note{color:var(--ink-500); font-size:.8rem;}
+
+  .faq{display:flex; flex-direction:column; gap:10px;}
+  .faq-item{background:#fff; border-radius:10px; box-shadow:var(--shadow); overflow:hidden;}
+  .faq-item summary{padding:16px 18px; cursor:pointer; font-weight:700; font-size:.95rem; list-style:none; display:flex; justify-content:space-between; align-items:center;}
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary::after{content:"+"; font-size:1.3rem; color:var(--green-600); font-weight:400;}
+  .faq-item[open] summary::after{content:"−";}
+  .faq-item .a{padding:0 18px 18px; font-size:.9rem; color:var(--ink-700);}
+
+  .method-list{font-size:.88rem; color:var(--ink-700);}
+  .method-list li{margin-bottom:8px;}
+
+  footer{background:var(--green-900); color:#cfe4da; padding:36px 0; font-size:.82rem;}
+  footer .wrap{display:flex; flex-direction:column; gap:10px;}
+  footer a{color:#fff;}
+  .disclaimer{background:#0a2f24; padding:14px 16px; border-radius:8px; font-size:.8rem; color:#a9c9bb; margin-top:8px;}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div class="brand">RelocateCR <span class="dot">| relocation, priced honestly</span></div>
+    <nav class="site">
+      <a href="#calculator">Calculator</a>
+      <a href="#visas">Visas</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>How much do you really need to live in Costa Rica?</h1>
+    <p class="lead">Not another generic "$1,500 a month" blog post. Tell us your household, your region, and your lifestyle — get a real budget range and an honest read on which residency visa your income actually qualifies for.</p>
+    <p class="updated">Figures last reviewed September 2026 · sources at the bottom of this page</p>
+  </div>
+</section>
+
+<div class="wrap">
+<div class="tool-card" id="calculator">
+
+  <div class="trust-line">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>
+    No email wall — see your number instantly, not after you subscribe to a quiz
+  </div>
+
+  <div class="tool-grid">
+
+    <div class="field-block">
+      <fieldset>
+        <legend>Household</legend>
+        <div class="opt-row" data-group="household">
+          <div class="opt active" data-value="single">Just me</div>
+          <div class="opt" data-value="couple">Couple</div>
+          <div class="opt" data-value="family">Family with kids</div>
+        </div>
+      </fieldset>
+      <div class="num-input" id="kids-row" style="display:none; margin-top:10px;">
+        <label style="font-size:.85rem;color:var(--ink-500);font-weight:600;">Kids</label>
+        <div class="stepper">
+          <button type="button" data-step="-1">−</button>
+          <span id="kids-count">1</span>
+          <button type="button" data-step="1">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-block">
+      <fieldset>
+        <legend>Visa track</legend>
+        <div class="opt-row" data-group="visa">
+          <div class="opt active" data-value="pensionado">Pensionado (pension)</div>
+          <div class="opt" data-value="rentista">Rentista (passive income)</div>
+          <div class="opt" data-value="nomad">Remote worker</div>
+          <div class="opt" data-value="exploring">Just exploring</div>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="field-block">
+      <fieldset>
+        <legend>Region</legend>
+        <div class="opt-row region-grid" data-group="region">
+          <div class="opt region-card active" data-value="vc-value">
+            <span class="rc-title">Central Valley — Value</span>
+            <span class="rc-sub">Atenas, Grecia, San Ramón, Heredia outskirts</span>
+          </div>
+          <div class="opt region-card" data-value="vc-premium">
+            <span class="rc-title">Central Valley — Premium</span>
+            <span class="rc-sub">Escazú, Santa Ana</span>
+          </div>
+          <div class="opt region-card" data-value="coast-value">
+            <span class="rc-title">Coast — Value</span>
+            <span class="rc-sub">Interior Guanacaste, Caribe Sur, Puntarenas</span>
+          </div>
+          <div class="opt region-card" data-value="coast-premium">
+            <span class="rc-title">Coast — Premium</span>
+            <span class="rc-sub">Tamarindo, Nosara, Flamingo, Santa Teresa</span>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="field-block">
+      <fieldset>
+        <legend>Housing comfort</legend>
+        <div class="opt-row" data-group="housing">
+          <div class="opt active" data-value="modest">Modest</div>
+          <div class="opt" data-value="comfortable">Comfortable</div>
+          <div class="opt" data-value="highend">High-end</div>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="field-block">
+      <fieldset>
+        <legend>Vehicle</legend>
+        <div class="opt-row" data-group="vehicle">
+          <div class="opt active" data-value="0">None</div>
+          <div class="opt" data-value="1">One</div>
+          <div class="opt" data-value="2">Two</div>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="field-block">
+      <fieldset>
+        <legend>Health coverage</legend>
+        <div class="opt-row" data-group="health">
+          <div class="opt active" data-value="caja">CAJA only</div>
+          <div class="opt" data-value="caja-private">CAJA + private supplemental</div>
+        </div>
+      </fieldset>
+    </div>
+
+  </div>
+
+  <div class="income-row">
+    <label for="income">Your monthly income (USD)</label>
+    <input type="number" id="income" placeholder="e.g. 2500" min="0" step="50">
+    <span style="font-size:.8rem;color:var(--ink-500);">— used only for the visa check and CAJA estimate, nothing is saved</span>
+  </div>
+
+  <div class="results" id="results">
+    <div class="results-head">
+      <div class="big-number">
+        <small>Estimated monthly budget</small>
+        <span id="total-range">$2,000 – $2,400</span>
+      </div>
+      <div class="range-note">This is a planning range, not a quote. Real households land anywhere in this band depending on habits, not just inputs.</div>
+    </div>
+
+    <div class="bars" id="bars"></div>
+
+    <div class="visa-check" id="visa-check">
+      <div class="icon" id="visa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="7.6" r="0.75" fill="currentColor" stroke="none"/></svg></div>
+      <div>
+        <h4 id="visa-title">Enter your income to check visa eligibility</h4>
+        <p id="visa-body">We'll compare it against the real Pensionado, Rentista, and Remote Worker income thresholds.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div class="copy">
+      <h4>Want a second opinion before you commit to a region?</h4>
+      <p>We're building a short list of vetted, independent relocation advisors and boutique real estate agents — not the big franchises. Get on the list.</p>
+    </div>
+    <form name="advisor-waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="waitlist-form">
+      <input type="hidden" name="form-name" value="advisor-waitlist">
+      <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+      <input type="email" name="email" id="cta-email" placeholder="you@email.com" required>
+      <button type="submit">Get matched</button>
+    </form>
+    <div class="thanks" id="cta-thanks">Got it — we'll be in touch.</div>
+  </div>
+
+</div>
+</div>
+
+<section class="info" id="visas">
+  <div class="wrap">
+    <h2>Costa Rica residency visas, in plain numbers</h2>
+    <p class="sub">Every one of these is a real legal income requirement, not a rule of thumb. Sources are linked at the bottom of the page.</p>
+
+    <table class="visa-table">
+      <thead>
+        <tr><th>Visa</th><th>Income requirement</th><th>What it gets you</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Pensionado</strong></td>
+          <td class="amt">$1,000/mo lifetime pension<br><span class="note">a married couple can qualify on one $1,000 pension</span></td>
+          <td>Permanent-track residency, renewable, path to citizenship after 7 years.</td>
+        </tr>
+        <tr>
+          <td><strong>Rentista</strong></td>
+          <td class="amt">$2,500/mo passive income for 24 months<br><span class="note">or a $60,000 deposit in an approved CR bank</span></td>
+          <td>Same residency track as Pensionado, for income that isn't a pension.</td>
+        </tr>
+        <tr>
+          <td><strong>Remote Worker / Digital Nomad</strong></td>
+          <td class="amt">$3,000/mo individual, $4,000/mo with dependents<br><span class="note">income must come from outside Costa Rica</span></td>
+          <td>Temporary stay only — 1 year, renewable once. Not a path to residency.</td>
+        </tr>
+        <tr>
+          <td><strong>Inversionista</strong></td>
+          <td class="amt">From $150,000 investment<br><span class="note">$100,000 for qualifying forestry projects</span></td>
+          <td>Same track as Pensionado/Rentista, via real estate, business, or securities.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="info alt">
+  <div class="wrap">
+    <h2>How we calculate your number</h2>
+    <p class="sub">No black box. This is the actual model, so you can judge it yourself.</p>
+    <ul class="method-list">
+      <li><strong>Housing</strong> is looked up by region and comfort tier from reported rental ranges — Central Valley value towns run $500–$1,200/mo, Escazú/Santa Ana $800–$2,200/mo, value coastal areas $550–$1,400/mo, and Tamarindo/Nosara-tier coast $1,000–$3,000/mo.</li>
+      <li><strong>Food & household</strong> starts around $350/mo for one adult, plus roughly $220 per additional adult and $150 per child, based on Costa Rican supermarket and market pricing.</li>
+      <li><strong>CAJA (public health insurance)</strong> is estimated at 9% of your stated income, with a realistic floor around $70/mo — this matches the commonly reported 7–11% range residents actually pay.</li>
+      <li><strong>Vehicle costs</strong> (insurance, fuel, maintenance, marchamo) are estimated at roughly $250/mo per vehicle.</li>
+      <li><strong>Discretionary spending</strong> (dining out, entertainment) scales up in premium coastal areas, where the whole cost structure runs higher.</li>
+    </ul>
+    <p style="font-size:.85rem;color:var(--ink-500);margin-top:18px;">What this does <em>not</em> include: private school tuition, one-time moving/import costs, immigration legal fees, or property purchase costs. Those are real and often larger than the monthly number above — ask us if you want help sizing them.</p>
+  </div>
+</section>
+
+<section class="info" id="faq">
+  <div class="wrap">
+    <h2>Frequently asked questions</h2>
+    <p class="sub"></p>
+    <div class="faq" id="faq-list">
+      <details class="faq-item">
+        <summary>Can I retire in Costa Rica on $1,500 a month?</summary>
+        <div class="a">In a value Central Valley town like Atenas or Grecia, as a single modest-lifestyle retiree with no vehicle, $1,500 is tight but realistic for day-to-day living. It gets noticeably harder with a vehicle, a couple, or any coastal premium location — run the numbers above for your actual situation rather than relying on a headline figure.</div>
+      </details>
+      <details class="faq-item">
+        <summary>What's the cheapest place to live in Costa Rica as an expat?</summary>
+        <div class="a">Central Valley towns outside the premium Escazú/Santa Ana corridor — places like Atenas, Grecia, San Ramón, Turrialba, or Heredia's outer cantons — consistently report the lowest all-in cost of living while staying close to the international airport and San José's hospitals.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Do I need private health insurance in Costa Rica?</summary>
+        <div class="a">Legal residents are required to enroll in CAJA, the public system, as part of maintaining residency status. Many expats add a private supplemental policy for shorter wait times and English-speaking private hospitals — that typically adds $100–$150/mo per adult.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Does the Pensionado visa require a Costa Rican pension?</summary>
+        <div class="a">No — it requires a lifetime pension of at least $1,000/mo from any legitimate source (Social Security, a foreign government pension, a qualifying private pension). A married couple can qualify together on a single $1,000/mo pension.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Can the Remote Worker visa lead to permanent residency?</summary>
+        <div class="a">No. It's a temporary stay permit — one year, renewable once, for a two-year maximum — and does not by itself convert into permanent residency. If long-term residency is the goal, Rentista or Pensionado is the actual track.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><strong>RelocateCR</strong> — an independent relocation planning resource. Not affiliated with the Costa Rican government or any immigration authority.</div>
+    <div>Sources: <a href="https://migracion.go.cr/regularizacion/" target="_blank" rel="noopener">Dirección General de Migración y Extranjería</a>, reported cost-of-living ranges from residents and relocation guides current as of September 2026, and CCSS voluntary insurance contribution rates.</div>
+    <div class="disclaimer">This tool provides general planning estimates only. It is not immigration, legal, tax, or financial advice, and figures can change without notice. Confirm current visa requirements directly with Costa Rican immigration authorities or a licensed immigration professional before making any decision.</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const state = {
+    household: 'single',
+    kids: 1,
+    visa: 'pensionado',
+    region: 'vc-value',
+    housing: 'modest',
+    vehicle: 0,
+    health: 'caja',
+    income: null
+  };
+
+  // ---- option pill wiring ----
+  document.querySelectorAll('[data-group]').forEach(group => {
+    const key = group.getAttribute('data-group');
+    group.addEventListener('click', (e) => {
+      const opt = e.target.closest('.opt');
+      if(!opt) return;
+      group.querySelectorAll('.opt').forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+      let val = opt.getAttribute('data-value');
+      if(key === 'vehicle') val = parseInt(val,10);
+      state[key] = val;
+      if(key === 'household'){
+        document.getElementById('kids-row').style.display = (val === 'family') ? 'flex' : 'none';
+      }
+      recalc();
+    });
+  });
+
+  document.querySelectorAll('#kids-row .stepper button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const step = parseInt(btn.getAttribute('data-step'),10);
+      state.kids = Math.max(1, Math.min(5, state.kids + step));
+      document.getElementById('kids-count').textContent = state.kids;
+      recalc();
+    });
+  });
+
+  document.getElementById('income').addEventListener('input', (e)=>{
+    const v = parseFloat(e.target.value);
+    state.income = isNaN(v) ? null : v;
+    recalc();
+  });
+
+  // ---- data tables ----
+  const HOUSING = {
+    'vc-value':      {modest:500,  comfortable:750,  highend:1200},
+    'vc-premium':    {modest:800,  comfortable:1300, highend:2200},
+    'coast-value':   {modest:550,  comfortable:850,  highend:1400},
+    'coast-premium': {modest:1000, comfortable:1800, highend:3000}
+  };
+  const REGION_LIFESTYLE_FACTOR = {
+    'vc-value':1.0, 'vc-premium':1.25, 'coast-value':1.05, 'coast-premium':1.6
+  };
+  const VEHICLE_COST = 250; // per vehicle, per month
+
+  function adults(){ return state.household === 'single' ? 1 : 2; }
+  function kids(){ return state.household === 'family' ? state.kids : 0; }
+
+  function computeBudget(){
+    const nAdults = adults();
+    const nKids = kids();
+
+    const housing = HOUSING[state.region][state.housing];
+
+    const food = 350 + (nAdults - 1) * 220 + nKids * 150;
+
+    const extraPeople = Math.max(0, (nAdults + nKids) - 1);
+    const utilities = 120 + extraPeople * 30;
+
+    const vehicleCost = state.vehicle * VEHICLE_COST;
+
+    const declaredIncome = state.income || defaultIncomeForVisa();
+    const caja = Math.max(70, declaredIncome * 0.09);
+    const privateIns = state.health === 'caja-private' ? nAdults * 130 : 0;
+
+    let discretionary = 250 + (nAdults - 1) * 150 + nKids * 80;
+    discretionary = discretionary * REGION_LIFESTYLE_FACTOR[state.region];
+
+    const total = housing + food + utilities + vehicleCost + caja + privateIns + discretionary;
+
+    return {
+      housing, food, utilities, vehicleCost, caja, privateIns, discretionary, total
+    };
+  }
+
+  function defaultIncomeForVisa(){
+    if(state.visa === 'pensionado') return 1000;
+    if(state.visa === 'rentista') return 2500;
+    if(state.visa === 'nomad') return state.household === 'family' ? 4000 : 3000;
+    return 1800;
+  }
+
+  function fmt(n){
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  function recalc(){
+    const b = computeBudget();
+    const low = b.total * 0.85;
+    const high = b.total * 1.15;
+    document.getElementById('total-range').textContent = fmt(low) + ' – ' + fmt(high);
+
+    const rows = [
+      ['Housing', b.housing],
+      ['Food & household', b.food],
+      ['Utilities & internet', b.utilities],
+      ['Transportation', b.vehicleCost],
+      ['CAJA + insurance', b.caja + b.privateIns],
+      ['Discretionary', b.discretionary]
+    ];
+    const max = Math.max(...rows.map(r=>r[1]), 1);
+    const barsEl = document.getElementById('bars');
+    barsEl.innerHTML = rows.map(([label, amt]) => `
+      <div class="bar-row">
+        <div class="label">${label}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.max(4, (amt/max)*100)}%"></div></div>
+        <div class="amt">${fmt(amt)}</div>
+      </div>
+    `).join('');
+
+    updateVisaCheck(b);
+  }
+
+  const ICONS = {
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="7.6" r="0.75" fill="currentColor" stroke="none"/></svg>',
+    ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>',
+    warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M12 4L21.5 20H2.5L12 4z"/><line x1="12" y1="10" x2="12" y2="14.5"/><circle cx="12" cy="17.2" r="0.75" fill="currentColor" stroke="none"/></svg>'
+  };
+
+  function updateVisaCheck(b){
+    const el = document.getElementById('visa-check');
+    const title = document.getElementById('visa-title');
+    const body = document.getElementById('visa-body');
+    const icon = document.getElementById('visa-icon');
+    const income = state.income;
+
+    if(income === null){
+      el.className = 'visa-check';
+      icon.innerHTML = ICONS.info;
+      title.textContent = 'Enter your income to check visa eligibility';
+      body.textContent = 'We\'ll compare it against the real Pensionado ($1,000/mo), Rentista ($2,500/mo), and Remote Worker ($3,000–4,000/mo) thresholds.';
+      return;
+    }
+
+    let ok, title_, body_;
+    if(state.visa === 'pensionado'){
+      ok = income >= 1000;
+      title_ = ok ? 'Qualifies for Pensionado residency' : 'Below the Pensionado threshold';
+      body_ = ok
+        ? `Your $${income.toLocaleString()}/mo lifetime pension clears the $1,000/mo minimum (a couple can share one $1,000 pension).`
+        : `Pensionado requires a guaranteed lifetime pension of $1,000/mo. You're $${Math.round(1000-income).toLocaleString()} short — Rentista ($2,500/mo passive income) may not help here since it has a higher bar, but check if a spouse's pension can be combined.`;
+    } else if(state.visa === 'rentista'){
+      ok = income >= 2500;
+      title_ = ok ? 'Qualifies for Rentista residency' : 'Below the Rentista threshold';
+      body_ = ok
+        ? `$${income.toLocaleString()}/mo in documented passive income (24-month history required) clears the $2,500/mo minimum.`
+        : `Rentista requires $2,500/mo in documented passive income for 24 months, or a $60,000 deposit in an approved Costa Rican bank instead. You're $${Math.round(2500-income).toLocaleString()}/mo short of the income route.`;
+    } else if(state.visa === 'nomad'){
+      const threshold = state.household === 'family' ? 4000 : 3000;
+      ok = income >= threshold;
+      title_ = ok ? 'Qualifies for the Remote Worker permit' : `Below the ${state.household === 'family' ? 'family' : 'individual'} Remote Worker threshold`;
+      body_ = ok
+        ? `$${income.toLocaleString()}/mo clears the $${threshold.toLocaleString()}/mo minimum. Remember: this is a temporary 1-year permit (renewable once), not a residency track.`
+        : `The Remote Worker permit needs $${threshold.toLocaleString()}/mo (individual: $3,000, with dependents: $4,000) from income earned outside Costa Rica. You're $${Math.round(threshold-income).toLocaleString()} short.`;
+    } else {
+      el.className = 'visa-check';
+      icon.innerHTML = ICONS.info;
+      title.textContent = 'No visa track selected yet';
+      body.textContent = 'Pick Pensionado, Rentista, or Remote Worker above once you know your income source, and we\'ll check it against the real thresholds.';
+      return;
+    }
+
+    el.className = 'visa-check ' + (ok ? 'ok' : 'warn');
+    icon.innerHTML = ok ? ICONS.ok : ICONS.warn;
+    title.textContent = title_;
+    body.textContent = body_;
+  }
+
+  // ---- waitlist form (Netlify Forms — no backend needed) ----
+  const form = document.getElementById('waitlist-form');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const data = new FormData(form);
+    fetch('/', {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-www-form-urlencoded'},
+      body: new URLSearchParams(data).toString()
+    }).then(()=>{
+      form.style.display = 'none';
+      document.getElementById('cta-thanks').style.display = 'block';
+    }).catch(()=>{
+      // Still show a friendly response even if the fetch fails locally (e.g. before Netlify deploy)
+      form.style.display = 'none';
+      document.getElementById('cta-thanks').style.display = 'block';
+    });
+  });
+
+  recalc();
+})();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can I retire in Costa Rica on $1,500 a month?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In a value Central Valley town like Atenas or Grecia, as a single modest-lifestyle retiree with no vehicle, $1,500 is tight but realistic for day-to-day living. It gets noticeably harder with a vehicle, a couple, or any coastal premium location."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What's the cheapest place to live in Costa Rica as an expat?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Central Valley towns outside the premium Escazu/Santa Ana corridor, such as Atenas, Grecia, San Ramon, Turrialba, or Heredia's outer cantons, consistently report the lowest all-in cost of living while staying close to the international airport and San Jose's hospitals."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need private health insurance in Costa Rica?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Legal residents are required to enroll in CAJA, the public system, as part of maintaining residency status. Many expats add a private supplemental policy for shorter wait times and English-speaking private hospitals, typically adding $100 to $150 per month per adult."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the Pensionado visa require a Costa Rican pension?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, it requires a lifetime pension of at least $1,000 per month from any legitimate source, including Social Security, a foreign government pension, or a qualifying private pension. A married couple can qualify together on a single $1,000 per month pension."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can the Remote Worker visa lead to permanent residency in Costa Rica?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. It is a temporary stay permit, valid one year and renewable once for a two-year maximum, and does not by itself convert into permanent residency."
+      }
+    }
+  ]
+}
+</script>
+
+</body>
+</html>
